@@ -24,7 +24,7 @@ const module = (function() {
                 "Content-Type": "application/json"
             }
         }, options)
-            .then(function(response) {
+            .then((response) => {
                 if (response.ok) {
                     return response.json();
                 } else {
@@ -41,7 +41,7 @@ const module = (function() {
                 "Content-Type": "application/json"
             }
         }, options)
-            .then(function(response) {
+            .then((response) => {
                 if (response.ok) {
                     return response.json();
                 } else {
@@ -58,7 +58,7 @@ const module = (function() {
         return fetch(url, { 
             method: "DELETE"
         }, options)
-            .then(function(response) {
+            .then((response) => {
                 if (response.ok) {
                     return response.json();
                 } else {

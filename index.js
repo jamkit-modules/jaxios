@@ -1,118 +1,105 @@
 const module = (function() {
-    function _request_get(url, params, options={}) {
-        if (params) {
-            url = url + "?" + _build_query(params)
+    function _request(url, method, data, config) {
+        return fetch(_build_url(url, config), Object.assign({ 
+            method: method,
+            headers: config.headers || {}
+        }, [ "POST", "PUT" ].includes(method) ? {
+            body: _build_body(data, config)
+        } : {}), config.options || {})
+            .then((response) => {
+                if (response.ok) {
+                    return _handle_response(response);
+                } else {
+                    return _handle_error(response);
+                }
+            });
+    }
+
+    function _build_url(url, config) {
+        const { baseURL } = config;
+
+        if (baseURL) {
+            return baseURL + url;
         }
 
-        return fetch(url, { 
-            method: "GET"
-        }, options)
-            .then((response) => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    return Promise.reject({ "status": response.status });
-                }
-            });
+        return url;
     }
 
-    function _request_post(url, params, options={}) {
-        return fetch(url, { 
-            method: "POST", 
-            body: JSON.stringify(params),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        }, options)
-            .then((response) => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    return Promise.reject({ "status": response.status });
-                }
-            });
-    }
+    function _build_body(data, config) {
+        const { headers } = config;
 
-    function _request_put(url, params, options={}) {
-        return fetch(url, { 
-            method: "PUT", 
-            body: JSON.stringify(params),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        }, options)
-            .then((response) => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    return Promise.reject({ "status": response.status });
-                }
-            });
-    }
-
-    function _request_delete(url, params, options={}) {
-        if (params) {
-            url = url + "?" + _build_query(params)
+        if (data) {
+            return JSON.stringify(data); // FIXME
         }
 
-        return fetch(url, { 
-            method: "DELETE"
-        }, options)
-            .then((response) => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    return Promise.reject({ "status": response.status });
-                }
+        return "";
+    }
+
+    function _handle_response(response) {
+        return Promise.resolve()
+            .then(() => {
+                return response.json() // FIXME
+                    .catch(() => {
+                        return response.text();
+                    });
             });
     }
 
-    function _build_query(params) {
-        var query = "";
-
-        for (const key in params) {
-            query += (query.length > 0) ? "&" : "";
-            query += key + "=" + encodeURIComponent(params[key]);
-        }
-    
-        return query;
+    function _handle_error(response) {
+        return Promise.resolve()
+            .then(() => {
+                return response.json() // FIXME
+                    .catch(() => {
+                        return Promise.reject({ "status": response.status });
+                    });
+            })
+            .then((data) => {
+                console.log(data)
+                return Promise.reject({ "status": response.status, "error": data }); // FIXME
+            });
     }
 
     return {
-        create: function(baseurl) {
+        create: function(config) {
+            const _config = Object.assign({}, config || {});
+
+            function _build_config(config) {
+                return Object.assign({}, _config, config || {});
+            }
+
             return {
-                get: function(path, params, options) {
-                    return _request_get(baseurl + path, params, options);
+                get: function(url, config) {
+                    return _request(url, "GET", null, _build_config(config));
                 },
 
-                post: function(path, params, options) {
-                    return _request_post(baseurl + path, params, options);
+                post: function(url, data, config) {
+                    return _request(url, "POST", data, _build_config(config));
                 },
 
-                put: function(path, params, options) {
-                    return _request_put(baseurl + path, params, options);
+                put: function(url, data, config) {
+                    return _request(url, "PUT", data, _build_config(config));
                 },
 
-                delete: function(path, params, options) {
-                    return _request_delete(baseurl + path, params, options);
+                delete: function(url, config) {
+                    return _request(url, "DELETE", null, _build_config(config));
                 }
             }
         },
 
-        get: function(url, params, options) {
-            return _request_get(url, params, options);
+        get: function(url, config) {
+            return this.create(config).get(url);
         },
 
-        post: function(url, params, options) {
-            return _request_post(url, params, options);
+        post: function(url, data, config) {
+            return this.create(config).post(url, data);
         },
 
-        put: function(url, params, options) {
-            return _request_put(url, params, options);
+        put: function(url, data, config) {
+            return this.create(config).put(url, data);
         },
 
-        delete: function(url, params, options) {
-            return _request_delete(url, params, options);
+        delete: function(url, config) {
+            return this.create(config).delete(url);
         }
     }
 })();

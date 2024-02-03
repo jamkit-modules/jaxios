@@ -1,6 +1,8 @@
 const module = (function() {
-    function _request(url, method, data, config) {
-        return fetch(_build_url(url, config), Object.assign({ 
+    const qs = require("querystring");
+
+    function _request(url, method, params, data, config) {
+        return fetch(_build_url(url, params, config), Object.assign({ 
             method: method,
             headers: config.headers || {}
         }, [ "POST", "PUT" ].includes(method) ? {
@@ -15,11 +17,15 @@ const module = (function() {
             });
     }
 
-    function _build_url(url, config) {
+    function _build_url(url, params, config) {
         const { baseURL } = config;
 
         if (baseURL) {
-            return baseURL + url;
+            url = baseURL + url;
+        }
+
+        if (params) {
+            url = url + "?" + qs.stringify(params);
         }
 
         return url;
@@ -28,17 +34,21 @@ const module = (function() {
     function _build_body(data, config) {
         const { headers } = config;
 
-        if (data) {
-            return JSON.stringify(data); // FIXME
+        if (headers["Content-Type"] === "application/json") {
+            return data ? JSON.stringify(data) : "";
         }
 
-        return "";
+        if (headers["Content-Type"] === "application/x-www-form-urlencodede") {
+            return data ? qs.stringify(data) : "";
+        }
+
+        return data || "";
     }
 
     function _handle_response(response) {
         return Promise.resolve()
             .then(() => {
-                return response.json() // FIXME
+                return response.json()
                     .catch(() => {
                         return response.text();
                     });
@@ -48,14 +58,13 @@ const module = (function() {
     function _handle_error(response) {
         return Promise.resolve()
             .then(() => {
-                return response.json() // FIXME
+                return response.json()
                     .catch(() => {
                         return Promise.reject({ "status": response.status });
                     });
             })
             .then((data) => {
-                console.log(data)
-                return Promise.reject({ "status": response.status, "error": data }); // FIXME
+                return Promise.reject({ "status": response.status, "error": data });
             });
     }
 
@@ -68,26 +77,26 @@ const module = (function() {
             }
 
             return {
-                get: function(url, config) {
-                    return _request(url, "GET", null, _build_config(config));
+                get: function(url, params, config) {
+                    return _request(url, "GET", params, null, _build_config(config));
                 },
 
                 post: function(url, data, config) {
-                    return _request(url, "POST", data, _build_config(config));
+                    return _request(url, "POST", null, data, _build_config(config));
                 },
 
                 put: function(url, data, config) {
-                    return _request(url, "PUT", data, _build_config(config));
+                    return _request(url, "PUT", null, data, _build_config(config));
                 },
 
-                delete: function(url, config) {
-                    return _request(url, "DELETE", null, _build_config(config));
+                delete: function(url, params, config) {
+                    return _request(url, "DELETE", params, null, _build_config(config));
                 }
             }
         },
 
-        get: function(url, config) {
-            return this.create(config).get(url);
+        get: function(url, params, config) {
+            return this.create(config).get(url, params);
         },
 
         post: function(url, data, config) {
@@ -98,8 +107,8 @@ const module = (function() {
             return this.create(config).put(url, data);
         },
 
-        delete: function(url, config) {
-            return this.create(config).delete(url);
+        delete: function(url, params, config) {
+            return this.create(config).delete(url, params);
         }
     }
 })();

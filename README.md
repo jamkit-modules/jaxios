@@ -5,7 +5,6 @@ A simple HTTP client module for Jamkit, similar to axios
 
 ### Simple Request
 
-#### js
 ```js
 const jaxios = require("jaxios");
 
@@ -34,7 +33,6 @@ jaxios.post("https://yourapi.com/api/v1/login", {
 
 ### Request with a Jaxios instance
 
-#### js
 ```js
 const jaxios = require("jaxios").create({
     "baseURL": "https://yourapi.com/api/v1"

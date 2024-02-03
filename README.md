@@ -74,8 +74,8 @@ GET 메소드로 요청한다.
 
 - **Parameters**:
   - `url` (string) - 요청 URL
-  - `params` (object) - 쿼리 스트링으로 전달될 파라미터
-  - `config` (JaxiosConfig) - 요청에 사용될 추가 설정
+  - `params` (object, optional) - 쿼리 스트링으로 전달될 파라미터
+  - `config` (JaxiosConfig, optional) - 요청에 사용될 추가 설정
 
 - **Returns**: `Promise<FetchResponse>` - `FetchResonse`를 전달하는 `Promise`
 
@@ -86,8 +86,8 @@ POST 메소드로 요청한다.
 
 - **Parameters**:
   - `url` (string) - 요청 URL
-  - `data` (object | string) - 요청 바디 데이터
-  - `config` (JaxiosConfig) - 요청에 사용될 추가 설정
+  - `data` (object | string, optional) - 요청 바디 데이터
+  - `config` (JaxiosConfig, optional) - 요청에 사용될 추가 설정
 
 - **Returns**: `Promise<FetchResponse>` - `FetchResonse`를 전달하는 `Promise`
 
@@ -98,8 +98,8 @@ PUT 메소드로 요청한다.
 
 - **Parameters**:
   - `url` (string) - 요청 URL
-  - `data` (object | string) - 요청 바디 데이터
-  - `config` (JaxiosConfig) - 요청에 사용될 추가 설정
+  - `data` (object | string, optional) - 요청 바디 데이터
+  - `config` (JaxiosConfig, optional) - 요청에 사용될 추가 설정
 
 - **Returns**: `Promise<FetchResponse>` - `FetchResonse`를 전달하는 `Promise`
 
@@ -110,8 +110,8 @@ DELETE 메소드로 요청한다.
 
 - **Parameters**:
   - `url` (string) - 요청 URL
-  - `params` (object) - 쿼리 스트링으로 전달될 파라미터
-  - `config` (JaxiosConfig) - 요청에 사용될 추가 설정
+  - `params` (object, optional) - 쿼리 스트링으로 전달될 파라미터
+  - `config` (JaxiosConfig, optional) - 요청에 사용될 추가 설정
 
 - **Returns**: `Promise<FetchResponse>` - `FetchResonse`를 전달하는 `Promise`
 

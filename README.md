@@ -1,5 +1,5 @@
 # jaxios
-A simple HTTP client module for Jamkit, similar to axios
+A simple HTTP client module for Jamkit, akin to axios
 
 ## Examples
 
@@ -136,7 +136,7 @@ Jaxios 인스턴스를 생성한다.
 
 #### Properties
 
-  - `ok` (boolean) - 응답 상태값이 2XX 인 경우 true
+  - `ok` (boolean) - 응답 상태값이 2XX 인 경우 True
   - `status` (number) - 응답 상태값
   - `statusText` (string, optional) - 응답 상태 메시지
   - `url` (string) - 요청 URL

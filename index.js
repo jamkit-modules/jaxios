@@ -12,16 +12,27 @@ const module = (function() {
                 if (response.ok) {
                     return _handle_response(response);
                 } else {
-                    return _handle_error(response);
+                    const { error_handler } = config;
+
+                    if (error_handler) {
+                        return _handle_error(response)
+                            .catch((error) => {
+                                return error_handler(error, function() {
+                                    return _request(url, method, params, data, config);
+                                }); 
+                            });
+                    } else {
+                        return _handle_error(response);
+                    }
                 }
             });
     }
 
     function _build_url(url, params, config) {
-        const { baseURL } = config;
+        const { base_url } = config;
 
-        if (baseURL) {
-            url = baseURL + url;
+        if (base_url) {
+            url = base_url + url;
         }
 
         if (params) {

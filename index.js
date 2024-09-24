@@ -7,23 +7,12 @@ const module = (function() {
             headers: config.headers || {}
         }, [ "POST", "PUT" ].includes(method) ? {
             body: _build_body(data, config)
-        } : {}), config.options || {})
+        } : {}))
             .then((response) => {
                 if (response.ok) {
                     return _handle_response(response);
                 } else {
-                    const { error_handler } = config;
-
-                    if (error_handler) {
-                        return _handle_error(response)
-                            .catch((error) => {
-                                return error_handler(error, function() {
-                                    return _request(url, method, params, data, config);
-                                }); 
-                            });
-                    } else {
-                        return _handle_error(response);
-                    }
+                    return _handle_error(response);
                 }
             });
     }
